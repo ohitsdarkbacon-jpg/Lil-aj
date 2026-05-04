@@ -31,7 +31,6 @@ const PANEL_STATE_FILE    = './panel_state.json';
 const PAYMENTS_FILE       = './payments.json';
 const CREDITS_BACKUP_FILE = './credits_backup.json';
 const PAUSE_STATE_FILE    = './pause_state.json';
-const LINKS_FILE          = './roblox_links.json';
 
 let users      = fs.existsSync(USERS_FILE)       ? JSON.parse(fs.readFileSync(USERS_FILE))       : {};
 let slots      = fs.existsSync(SLOTS_FILE)       ? JSON.parse(fs.readFileSync(SLOTS_FILE))       : [];
@@ -39,30 +38,26 @@ let auctions   = fs.existsSync(AUCTIONS_FILE)    ? JSON.parse(fs.readFileSync(AU
 let panelState = fs.existsSync(PANEL_STATE_FILE) ? JSON.parse(fs.readFileSync(PANEL_STATE_FILE)) : {};
 let payments   = fs.existsSync(PAYMENTS_FILE)    ? JSON.parse(fs.readFileSync(PAYMENTS_FILE))    : {};
 let pauseState = fs.existsSync(PAUSE_STATE_FILE) ? JSON.parse(fs.readFileSync(PAUSE_STATE_FILE)) : { paused: false, pausedAt: null };
-let links      = fs.existsSync(LINKS_FILE)       ? JSON.parse(fs.readFileSync(LINKS_FILE))       : {};
 
 // ===== PROJECT CONFIG =====
-// Pro: 10 credits = 1 hour, minimum 1 credit (= 6 min), 6 slots
-// NOTE: $1 = 1 credit, so 10 credits = $10 = 1 hour
 const PROJECTS = {
   1: {
     id:            process.env.LUARMOR_PROJECT_ID_1,
     name:          'Pro',
     creditsPerHour: 10,
-    minCredits:    10,   // minimum 1 hour = 10 credits
+    minCredits:    10,
     maxSlots:      6,
     apiKey:        process.env.LUARMOR_API_KEY
   },
 };
 
 // ===== AUCTION CONFIG =====
-// One bid slot for Pro
-const AUCTION_PROJECT_NUM   = 1;      // Pro
-const BID_SLOTS             = 1;      // single bid slot
+const AUCTION_PROJECT_NUM   = 1;
+const BID_SLOTS             = 1;
 const AUCTION_DURATION_MINS = 5;
 const AUCTION_FIXED_HOURS   = 2;
 const AUCTION_COOLDOWN_MS   = AUCTION_FIXED_HOURS * 60 * 60 * 1000;
-const AUCTION_MIN_BID       = 25;     // 25 credits minimum bid
+const AUCTION_MIN_BID       = 25;
 
 const WEBHOOK_PORT     = parseInt(process.env.WEBHOOK_PORT || '3000');
 const WEBHOOK_BASE_URL = process.env.WEBHOOK_BASE_URL || `http://localhost:${WEBHOOK_PORT}`;
@@ -78,7 +73,6 @@ function saveAuctions()   { fs.writeFileSync(AUCTIONS_FILE,    JSON.stringify(au
 function savePanelState() { fs.writeFileSync(PANEL_STATE_FILE, JSON.stringify(panelState, null, 2)); }
 function savePayments()   { fs.writeFileSync(PAYMENTS_FILE,    JSON.stringify(payments,   null, 2)); }
 function savePauseState() { fs.writeFileSync(PAUSE_STATE_FILE, JSON.stringify(pauseState, null, 2)); }
-function saveLinks()      { fs.writeFileSync(LINKS_FILE,       JSON.stringify(links,      null, 2)); }
 
 function saveCreditsBackup() {
   const backup = {};
@@ -90,18 +84,6 @@ function saveCreditsBackup() {
 function loadCreditsBackup() {
   if (!fs.existsSync(CREDITS_BACKUP_FILE)) return null;
   return JSON.parse(fs.readFileSync(CREDITS_BACKUP_FILE));
-}
-
-// ===== LINK HELPERS =====
-function recordLink(robloxName, discordTag, discordId) {
-  const robloxKey = robloxName.toLowerCase();
-  if (!links[robloxKey]) links[robloxKey] = [];
-  const exists = links[robloxKey].find(l => l.discordTag === discordTag);
-  if (!exists) {
-    links[robloxKey].push({ discordTag, discordId: discordId || null, linkedAt: Date.now() });
-    saveLinks();
-    console.log(`🔗 New link: Roblox "${robloxName}" → Discord "${discordTag}"`);
-  }
 }
 
 // ===== COMMANDS =====
@@ -143,18 +125,6 @@ const commands = [
     .setDescription('(Admin) Import credit balances from an exported JSON file')
     .addAttachmentOption(opt =>
       opt.setName('file').setDescription('The exported credits JSON file').setRequired(true)
-    ),
-  new SlashCommandBuilder()
-    .setName('search')
-    .setDescription('(Admin) Search all Roblox accounts linked to a Discord user')
-    .addUserOption(opt =>
-      opt.setName('user').setDescription('Discord user to search').setRequired(false)
-    )
-    .addStringOption(opt =>
-      opt.setName('roblox').setDescription('Roblox username to search').setRequired(false)
-    )
-    .addStringOption(opt =>
-      opt.setName('discord_tag').setDescription('Discord tag (username) to search').setRequired(false)
     ),
 ].map(c => c.toJSON());
 
@@ -469,33 +439,13 @@ function startWebhookServer() {
       return;
     }
 
-    if (req.method === 'POST' && req.url === '/link-account') {
-      const chunks = [];
-      req.on('data', chunk => chunks.push(chunk));
-      req.on('end', () => {
-        let payload;
-        try { payload = JSON.parse(Buffer.concat(chunks).toString('utf8')); } catch {
-          res.writeHead(400); return res.end(JSON.stringify({ ok: false, error: 'bad json' }));
-        }
-        const { robloxName, discordTag, discordId } = payload || {};
-        if (!robloxName || !discordTag) {
-          res.writeHead(400); return res.end(JSON.stringify({ ok: false, error: 'missing fields' }));
-        }
-        recordLink(String(robloxName).trim(), String(discordTag).trim(), discordId ? String(discordId).trim() : null);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ ok: true }));
-      });
-      return;
-    }
-
     res.writeHead(404);
     res.end('Not found');
   });
 
   server.listen(WEBHOOK_PORT, () => {
     console.log(`🌐 Webhook server on port ${WEBHOOK_PORT}`);
-    console.log(`   IPN URL  → ${WEBHOOK_BASE_URL}/nowpayments-webhook`);
-    console.log(`   Link URL → ${WEBHOOK_BASE_URL}/link-account`);
+    console.log(`   IPN URL → ${WEBHOOK_BASE_URL}/nowpayments-webhook`);
   });
 }
 
@@ -705,7 +655,6 @@ async function updatePanelMessage() {
 }
 
 // ===== AUCTION HELPERS =====
-// Single auction slot for Pro
 function getAuctionId() { return 'auction_pro_1'; }
 
 function getTopBid(auction) {
@@ -1257,75 +1206,6 @@ client.on('interactionCreate', async interaction => {
       ]
     });
   }
-
-  // /search
-  if (interaction.commandName === 'search' && isAdmin) {
-    const targetUser      = interaction.options.getUser('user');
-    const robloxQuery     = (interaction.options.getString('roblox')       || '').trim().toLowerCase();
-    const discordTagQuery = (interaction.options.getString('discord_tag')  || '').trim().toLowerCase();
-
-    if (!targetUser && !robloxQuery && !discordTagQuery) {
-      return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('❌ No Search Term').setColor(0xED4245).setDescription('Provide at least one of: `user`, `roblox`, or `discord_tag`.').setFooter({ text: 'Lion Notifier Admin' })],
-        ephemeral: true
-      });
-    }
-
-    await interaction.deferReply({ ephemeral: true });
-
-    const embed = new EmbedBuilder()
-      .setTitle('🔍 Account Search Results')
-      .setColor(0x5865F2)
-      .setFooter({ text: 'Lion Notifier Admin  •  Account Linking' })
-      .setTimestamp();
-
-    if (targetUser || discordTagQuery) {
-      const searchId  = targetUser?.id  || null;
-      const searchTag = targetUser?.username?.toLowerCase() || discordTagQuery;
-      const matches   = [];
-
-      for (const [robloxKey, entries] of Object.entries(links)) {
-        for (const entry of entries) {
-          const tagMatch = entry.discordTag?.toLowerCase() === searchTag;
-          const idMatch  = searchId && entry.discordId === searchId;
-          if (tagMatch || idMatch) matches.push({ robloxName: robloxKey, discordTag: entry.discordTag, linkedAt: entry.linkedAt });
-        }
-      }
-
-      if (matches.length === 0) {
-        embed.setDescription(`No Roblox accounts found linked to **${targetUser?.tag || discordTagQuery}**.`);
-      } else {
-        embed.setDescription(`Found **${matches.length}** Roblox account${matches.length !== 1 ? 's' : ''} linked to **${targetUser?.tag || discordTagQuery}**:`);
-        const lines  = matches.map(m => `• \`${m.robloxName}\` — <t:${Math.floor((m.linkedAt || 0) / 1000)}:D>`);
-        const chunks = [];
-        let current  = '';
-        for (const line of lines) {
-          if ((current + line + '\n').length > 1000) { chunks.push(current.trimEnd()); current = ''; }
-          current += line + '\n';
-        }
-        if (current) chunks.push(current.trimEnd());
-        chunks.forEach((c, i) => embed.addFields({ name: i === 0 ? '🎮 Roblox Accounts' : '\u200b', value: c, inline: false }));
-      }
-
-      return interaction.editReply({ embeds: [embed] });
-    }
-
-    if (robloxQuery) {
-      const matchedKeys = Object.keys(links).filter(k => k.includes(robloxQuery));
-      if (matchedKeys.length === 0) {
-        embed.setDescription(`No Discord accounts found linked to Roblox name matching **"${robloxQuery}"**.`);
-        return interaction.editReply({ embeds: [embed] });
-      }
-      embed.setDescription(`Found **${matchedKeys.length}** Roblox username${matchedKeys.length !== 1 ? 's' : ''} matching **"${robloxQuery}"**:`);
-      for (const robloxKey of matchedKeys.slice(0, 15)) {
-        const entries = links[robloxKey];
-        const lines   = entries.map(e => `• \`${e.discordTag || 'unknown'}\`${e.discordId ? ` (<@${e.discordId}>)` : ''} — <t:${Math.floor((e.linkedAt || 0) / 1000)}:D>`);
-        embed.addFields({ name: `🎮 ${robloxKey}`, value: lines.join('\n').slice(0, 1024) || '—', inline: false });
-      }
-      if (matchedKeys.length > 15) embed.addFields({ name: '⚠️ Truncated', value: `Only showing first 15 of ${matchedKeys.length} results.`, inline: false });
-      return interaction.editReply({ embeds: [embed] });
-    }
-  }
 });
 
 // ===== BUTTON HANDLER =====
@@ -1565,7 +1445,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     const hoursEntered   = rawInput;
-    const creditsToSpend = hoursEntered * project.creditsPerHour; // 10 per hour
+    const creditsToSpend = hoursEntered * project.creditsPerHour;
 
     if (creditsToSpend > userCredits) {
       return interaction.reply({
