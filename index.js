@@ -88,7 +88,7 @@ function loadCreditsBackup() {
 
 // ===== COMMANDS =====
 const commands = [
-  new SlashCommandBuilder().setName('panel').setDescription('Open the Lion Notifier slot panel'),
+  new SlashCommandBuilder().setName('panel').setDescription('Open the LIL AJ slot panel'),
   new SlashCommandBuilder().setName('bidpanel').setDescription('Show auction status (admin)'),
   new SlashCommandBuilder()
     .setName('givecredits')
@@ -376,7 +376,7 @@ async function deliverCredits(paymentId, paymentStatus, actuallyPaid, payCurrenc
             { name: '✅ Credits Added', value: `**+${credits}**`,                        inline: true },
             { name: '💳 New Balance',   value: `**${users[userId].credits} credits**`,  inline: true },
           )
-          .setFooter({ text: 'Credits are rounded down to the nearest dollar  •  Lion Notifier' })
+          .setFooter({ text: 'Credits are rounded down to the nearest dollar  •  LIL AJ' })
           .setTimestamp()
       ]
     });
@@ -497,8 +497,8 @@ function generatePanelEmbed() {
   const paused    = isSystemPaused();
 
   const embed = new EmbedBuilder()
-    .setTitle('🦁 Lion Notifier — Slot Panel')
-    .setColor(paused ? 0xED4245 : 0xF5C542)
+    .setTitle('💜 LIL AJ — Slot Panel')
+    .setColor(paused ? 0xED4245 : 0x9B59B6)
     .setDescription(
       (paused
         ? '> ⏸️  **System is currently paused.** Purchases & slot countdowns are frozen.\n> Crypto payments continue processing normally.\n\n'
@@ -515,7 +515,7 @@ function generatePanelEmbed() {
       ].join('\n'),
       inline: false
     })
-    .setFooter({ text: paused ? '⏸️  SYSTEM PAUSED  •  Lion Notifier' : 'Use the buttons below to activate a slot or top up credits  •  Lion Notifier' })
+    .setFooter({ text: paused ? '⏸️  SYSTEM PAUSED  •  LIL AJ' : 'Use the buttons below to activate a slot or top up credits  •  LIL AJ' })
     .setTimestamp();
 
   return embed;
@@ -530,7 +530,7 @@ function generateSlotsEmbed() {
 
   const embed = new EmbedBuilder()
     .setTitle('📊 Live Slot Overview — Pro')
-    .setColor(paused ? 0x99AAB5 : 0x5865F2)
+    .setColor(paused ? 0x6C3483 : 0xFF69B4)
     .setTimestamp();
 
   if (paused) {
@@ -558,7 +558,7 @@ function generateAuctionSectionEmbed() {
 
   const embed = new EmbedBuilder()
     .setTitle('🏷️ Bid Slot — Pro')
-    .setColor(paused ? 0x99AAB5 : 0xF5C542)
+    .setColor(paused ? 0x6C3483 : 0x9B59B6)
     .setDescription(
       `Auction starts when the **first bid** is placed and runs for **${AUCTION_DURATION_MINS} minutes**.\n` +
       `The winner receives **${AUCTION_FIXED_HOURS} hours** flat — highest bid takes the slot.\n\n` +
@@ -688,7 +688,7 @@ async function refundBidders(auction, winnerUserId = null) {
             .setColor(0xED4245)
             .setDescription(`You didn't win this round. Your **${bid.amount} credits** have been refunded.`)
             .addFields({ name: '💳 Balance', value: `**${users[bid.userId].credits} credits**`, inline: true })
-            .setFooter({ text: 'Better luck next time  •  Lion Notifier' })
+            .setFooter({ text: 'Better luck next time  •  LIL AJ' })
         ]
       });
     } catch {}
@@ -765,7 +765,7 @@ async function endAuction(auctionId) {
               `Your **${topBid.amount} credits** have been refunded. Please contact an admin.`
             )
             .addFields({ name: '💳 Balance', value: `**${users[topBid.userId].credits} credits**`, inline: true })
-            .setFooter({ text: 'Lion Notifier' })
+            .setFooter({ text: 'LIL AJ' })
         ]
       });
     } catch {}
@@ -811,7 +811,7 @@ async function endAuction(auctionId) {
             { name: '💳 Credits Spent',     value: `**${topBid.amount}**`,               inline: true  },
             { name: '💳 Credits Remaining', value: `**${users[topBid.userId].credits}**`, inline: true  }
           )
-          .setFooter({ text: 'Keep your key private. The slot is now occupied for 2 hours.  •  Lion Notifier' })
+          .setFooter({ text: 'Keep your key private. The slot is now occupied for 2 hours.  •  LIL AJ' })
       ]
     });
     console.log(`✅ Key DM sent to winner ${topBid.userId}`);
@@ -851,12 +851,12 @@ async function endAuction(auctionId) {
         embeds: [
           new EmbedBuilder()
             .setTitle('🏆 Auction Closed — Pro Bid Slot')
-            .setColor(0xF5C542)
+            .setColor(0x9B59B6)
             .setDescription(
               `<@${topBid.userId}> won with a bid of **${topBid.amount} credits** and has received their key via DM.\n` +
               `This slot is now **occupied for ${AUCTION_FIXED_HOURS} hours**.`
             )
-            .setFooter({ text: 'Lion Notifier  •  Bid Auctions' })
+            .setFooter({ text: 'LIL AJ  •  Bid Auctions' })
             .setTimestamp()
         ]
       });
@@ -898,9 +898,9 @@ client.on('interactionCreate', async interaction => {
       embeds: [
         new EmbedBuilder()
           .setTitle('🏷️ Auction Status — Admin View')
-          .setColor(0xF5C542)
+          .setColor(0x9B59B6)
           .setDescription(`**Pro Bid Slot:** ${st}${topBid ? ` · Top: ${topBid.amount}cr by <@${topBid.userId}>` : ''}`)
-          .setFooter({ text: 'Lion Notifier Admin' })
+          .setFooter({ text: 'LIL AJ Admin' })
           .setTimestamp()
       ],
       ephemeral: true
@@ -925,7 +925,7 @@ client.on('interactionCreate', async interaction => {
             { name: 'Added',       value: `**+${amount} credits**`,          inline: true },
             { name: 'New Balance', value: `**${users[target.id].credits}**`, inline: true }
           )
-          .setFooter({ text: 'Lion Notifier Admin' })
+          .setFooter({ text: 'LIL AJ Admin' })
       ],
       ephemeral: true
     });
@@ -940,7 +940,7 @@ client.on('interactionCreate', async interaction => {
           .setTitle('💾 Credits Backed Up')
           .setColor(0x57F287)
           .setDescription(`Saved credits for **${Object.keys(users).length} user(s)** → \`credits_backup.json\``)
-          .setFooter({ text: 'Lion Notifier Admin' })
+          .setFooter({ text: 'LIL AJ Admin' })
           .setTimestamp()
       ],
       ephemeral: true
@@ -957,7 +957,7 @@ client.on('interactionCreate', async interaction => {
             .setTitle('❌ No Backup Found')
             .setColor(0xED4245)
             .setDescription('Run `/backupcredits` first.')
-            .setFooter({ text: 'Lion Notifier Admin' })
+            .setFooter({ text: 'LIL AJ Admin' })
         ],
         ephemeral: true
       });
@@ -975,7 +975,7 @@ client.on('interactionCreate', async interaction => {
           .setTitle('✅ Credits Restored')
           .setColor(0x57F287)
           .setDescription(`Restored credits for **${restored} user(s)** from backup.`)
-          .setFooter({ text: 'Lion Notifier Admin' })
+          .setFooter({ text: 'LIL AJ Admin' })
           .setTimestamp()
       ],
       ephemeral: true
@@ -990,12 +990,12 @@ client.on('interactionCreate', async interaction => {
       embeds: [
         new EmbedBuilder()
           .setTitle('💳 Credit Balance')
-          .setColor(0x5865F2)
+          .setColor(0xFF69B4)
           .addFields(
             { name: 'User',    value: target.tag,                                inline: true },
             { name: 'Balance', value: `**${users[target.id].credits} credits**`, inline: true }
           )
-          .setFooter({ text: 'Lion Notifier Admin' })
+          .setFooter({ text: 'LIL AJ Admin' })
       ],
       ephemeral: true
     });
@@ -1043,7 +1043,7 @@ client.on('interactionCreate', async interaction => {
           .setTitle('✅ Auction Reset')
           .setColor(0x57F287)
           .setDescription('Pro bid slot has been reset to idle. All bidders refunded.')
-          .setFooter({ text: 'Lion Notifier Admin' })
+          .setFooter({ text: 'LIL AJ Admin' })
       ],
       ephemeral: true
     });
@@ -1056,9 +1056,9 @@ client.on('interactionCreate', async interaction => {
         embeds: [
           new EmbedBuilder()
             .setTitle('⏸️ Already Paused')
-            .setColor(0xFEE75C)
+            .setColor(0xD7BDE2)
             .setDescription(`System is already paused since <t:${Math.floor(pauseState.pausedAt / 1000)}:R>.\nUse \`/unpause\` to resume.`)
-            .setFooter({ text: 'Lion Notifier Admin' })
+            .setFooter({ text: 'LIL AJ Admin' })
         ],
         ephemeral: true
       });
@@ -1078,7 +1078,7 @@ client.on('interactionCreate', async interaction => {
             '• Crypto payments **continue** processing\n\n' +
             'When you `/unpause`, all active keys will be **automatically extended** by the paused duration.'
           )
-          .setFooter({ text: 'Lion Notifier Admin' })
+          .setFooter({ text: 'LIL AJ Admin' })
           .setTimestamp()
       ],
       ephemeral: false
@@ -1092,9 +1092,9 @@ client.on('interactionCreate', async interaction => {
         embeds: [
           new EmbedBuilder()
             .setTitle('▶️ Already Running')
-            .setColor(0xFEE75C)
+            .setColor(0xD7BDE2)
             .setDescription('The system is not currently paused.')
-            .setFooter({ text: 'Lion Notifier Admin' })
+            .setFooter({ text: 'LIL AJ Admin' })
         ],
         ephemeral: true
       });
@@ -1113,7 +1113,7 @@ client.on('interactionCreate', async interaction => {
             `• Active keys extended: **${result.extended}**\n\n` +
             'All active Luarmor keys have been extended by the paused duration.'
           )
-          .setFooter({ text: 'Lion Notifier Admin' })
+          .setFooter({ text: 'LIL AJ Admin' })
           .setTimestamp()
       ]
     });
@@ -1134,14 +1134,14 @@ client.on('interactionCreate', async interaction => {
       embeds: [
         new EmbedBuilder()
           .setTitle('📤 Credits Exported')
-          .setColor(0x5865F2)
+          .setColor(0xFF69B4)
           .setDescription(`All user credit balances exported to **\`${fileName}\`**.`)
           .addFields(
             { name: '👥 Users',         value: `**${userCount}**`,  inline: true },
             { name: '🪙 Total Credits', value: `**${totalCreds}**`, inline: true },
             { name: '📅 Exported At',   value: `<t:${Math.floor(Date.now() / 1000)}:F>`, inline: false },
           )
-          .setFooter({ text: 'Lion Notifier Admin  •  Keep this file safe' })
+          .setFooter({ text: 'LIL AJ Admin  •  Keep this file safe' })
           .setTimestamp()
       ],
       files: [attachment]
@@ -1155,7 +1155,7 @@ client.on('interactionCreate', async interaction => {
 
     if (!attachment.name.endsWith('.json')) {
       return interaction.editReply({
-        embeds: [new EmbedBuilder().setTitle('❌ Invalid File').setColor(0xED4245).setDescription('Please attach a `.json` file from `/exportcredits`.').setFooter({ text: 'Lion Notifier Admin' })]
+        embeds: [new EmbedBuilder().setTitle('❌ Invalid File').setColor(0xED4245).setDescription('Please attach a `.json` file from `/exportcredits`.').setFooter({ text: 'LIL AJ Admin' })]
       });
     }
 
@@ -1163,7 +1163,7 @@ client.on('interactionCreate', async interaction => {
     try { const resp = await axios.get(attachment.url, { responseType: 'text' }); rawText = resp.data; }
     catch (err) {
       return interaction.editReply({
-        embeds: [new EmbedBuilder().setTitle('❌ Download Failed').setColor(0xED4245).setDescription(`Could not download the attachment: \`${err.message}\``).setFooter({ text: 'Lion Notifier Admin' })]
+        embeds: [new EmbedBuilder().setTitle('❌ Download Failed').setColor(0xED4245).setDescription(`Could not download the attachment: \`${err.message}\``).setFooter({ text: 'LIL AJ Admin' })]
       });
     }
 
@@ -1171,13 +1171,13 @@ client.on('interactionCreate', async interaction => {
     try { importData = typeof rawText === 'string' ? JSON.parse(rawText) : rawText; }
     catch {
       return interaction.editReply({
-        embeds: [new EmbedBuilder().setTitle('❌ Invalid JSON').setColor(0xED4245).setDescription('The file could not be parsed as JSON.').setFooter({ text: 'Lion Notifier Admin' })]
+        embeds: [new EmbedBuilder().setTitle('❌ Invalid JSON').setColor(0xED4245).setDescription('The file could not be parsed as JSON.').setFooter({ text: 'LIL AJ Admin' })]
       });
     }
 
     if (typeof importData !== 'object' || Array.isArray(importData)) {
       return interaction.editReply({
-        embeds: [new EmbedBuilder().setTitle('❌ Invalid Format').setColor(0xED4245).setDescription('Expected `{ "userId": credits }` format.').setFooter({ text: 'Lion Notifier Admin' })]
+        embeds: [new EmbedBuilder().setTitle('❌ Invalid Format').setColor(0xED4245).setDescription('Expected `{ "userId": credits }` format.').setFooter({ text: 'LIL AJ Admin' })]
       });
     }
 
@@ -1201,7 +1201,7 @@ client.on('interactionCreate', async interaction => {
             { name: '✅ Imported', value: `**${imported} user(s)**`, inline: true },
             { name: '⏭️ Skipped',  value: `**${skipped} entry(s)**`, inline: true },
           )
-          .setFooter({ text: 'Lion Notifier Admin  •  Credits saved and backed up' })
+          .setFooter({ text: 'LIL AJ Admin  •  Credits saved and backed up' })
           .setTimestamp()
       ]
     });
@@ -1249,7 +1249,7 @@ client.on('interactionCreate', async interaction => {
   if (interaction.customId === 'select_project_1') {
     if (isSystemPaused()) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('⏸️ System Paused').setColor(0xED4245).setDescription('Slot purchases are unavailable while the system is paused.').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('⏸️ System Paused').setColor(0xED4245).setDescription('Slot purchases are unavailable while the system is paused.').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1267,7 +1267,7 @@ client.on('interactionCreate', async interaction => {
               `You need at least **${project.minCredits} credits** to activate a **Pro** slot (= 1 hour).\n` +
               `You currently have **${userCredits} credits**.\n\nUse **💳 Buy Credits** to top up.`
             )
-            .setFooter({ text: 'Lion Notifier' })
+            .setFooter({ text: 'LIL AJ' })
         ],
         ephemeral: true
       });
@@ -1275,7 +1275,7 @@ client.on('interactionCreate', async interaction => {
 
     if (getActiveSlots(1) >= project.maxSlots) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('❌ No Slots Available').setColor(0xED4245).setDescription('All **Pro** slots are currently full. Try again later!').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('❌ No Slots Available').setColor(0xED4245).setDescription('All **Pro** slots are currently full. Try again later!').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1300,7 +1300,7 @@ client.on('interactionCreate', async interaction => {
   if (interaction.customId.startsWith('place_bid_')) {
     if (isSystemPaused()) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('⏸️ System Paused').setColor(0xED4245).setDescription('Auction bidding is unavailable while the system is paused.').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('⏸️ System Paused').setColor(0xED4245).setDescription('Auction bidding is unavailable while the system is paused.').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1312,14 +1312,14 @@ client.on('interactionCreate', async interaction => {
     if (isAuctionSlotOnCooldown()) {
       const timeLeft = formatTime(auction.cooldownUntil - Date.now());
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('🔒 Slot Occupied').setColor(0xED4245).setDescription(`This slot is currently occupied. Bidding reopens in **${timeLeft}**.`).setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('🔒 Slot Occupied').setColor(0xED4245).setDescription(`This slot is currently occupied. Bidding reopens in **${timeLeft}**.`).setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
 
     if (auction.status === 'ended') {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('⏳ Auction Finalizing').setColor(0xFEE75C).setDescription('This auction just ended. Wait for the next round.').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('⏳ Auction Finalizing').setColor(0xD7BDE2).setDescription('This auction just ended. Wait for the next round.').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1361,12 +1361,12 @@ client.on('interactionCreate', async interaction => {
 
     if (isNaN(usdAmount) || usdAmount < 1) {
       return interaction.editReply({
-        embeds: [new EmbedBuilder().setTitle('❌ Invalid Amount').setColor(0xED4245).setDescription('Please enter a valid dollar amount (minimum **$1**).').setFooter({ text: 'Lion Notifier' })]
+        embeds: [new EmbedBuilder().setTitle('❌ Invalid Amount').setColor(0xED4245).setDescription('Please enter a valid dollar amount (minimum **$1**).').setFooter({ text: 'LIL AJ' })]
       });
     }
     if (!['btc', 'ltc'].includes(rawCoin)) {
       return interaction.editReply({
-        embeds: [new EmbedBuilder().setTitle('❌ Invalid Coin').setColor(0xED4245).setDescription('Supported coins: **btc** or **ltc**').setFooter({ text: 'Lion Notifier' })]
+        embeds: [new EmbedBuilder().setTitle('❌ Invalid Coin').setColor(0xED4245).setDescription('Supported coins: **btc** or **ltc**').setFooter({ text: 'LIL AJ' })]
       });
     }
 
@@ -1376,7 +1376,7 @@ client.on('interactionCreate', async interaction => {
 
       if (!payment_id || !pay_address) {
         return interaction.editReply({
-          embeds: [new EmbedBuilder().setTitle('❌ Invoice Error').setColor(0xED4245).setDescription('NowPayments returned an incomplete response. Please try again.').setFooter({ text: 'Lion Notifier' })]
+          embeds: [new EmbedBuilder().setTitle('❌ Invoice Error').setColor(0xED4245).setDescription('NowPayments returned an incomplete response. Please try again.').setFooter({ text: 'LIL AJ' })]
         });
       }
 
@@ -1395,7 +1395,7 @@ client.on('interactionCreate', async interaction => {
       const coinLabel = (pay_currency || rawCoin).toUpperCase();
       const embed = new EmbedBuilder()
         .setTitle(`💳 ${coinLabel} Invoice — ${usdAmount} Credits`)
-        .setColor(0xF5C542)
+        .setColor(0x9B59B6)
         .setDescription(
           '> Send **exactly** the amount shown to the address below.\n' +
           '> Credits are added **automatically** once your payment confirms.\n\n' +
@@ -1407,7 +1407,7 @@ client.on('interactionCreate', async interaction => {
           { name: "🎁 Credits You'll Receive", value: `**${usdAmount} credits**`,       inline: true  },
           { name: '🆔 Payment ID',             value: `\`${payment_id}\``,              inline: false },
         )
-        .setFooter({ text: 'Invoice expires in ~20 min  •  Lion Notifier' });
+        .setFooter({ text: 'Invoice expires in ~20 min  •  LIL AJ' });
 
       if (expiration_estimate_date) {
         embed.addFields({ name: '⏰ Expires', value: `<t:${Math.floor(new Date(expiration_estimate_date).getTime() / 1000)}:R>`, inline: true });
@@ -1419,7 +1419,7 @@ client.on('interactionCreate', async interaction => {
     } catch (err) {
       const msg = err.response?.data?.message || err.message;
       return interaction.editReply({
-        embeds: [new EmbedBuilder().setTitle('❌ Payment Error').setColor(0xED4245).setDescription(`Failed to create payment invoice:\n\`\`\`${msg}\`\`\``).setFooter({ text: 'Lion Notifier' })]
+        embeds: [new EmbedBuilder().setTitle('❌ Payment Error').setColor(0xED4245).setDescription(`Failed to create payment invoice:\n\`\`\`${msg}\`\`\``).setFooter({ text: 'LIL AJ' })]
       });
     }
   }
@@ -1428,7 +1428,7 @@ client.on('interactionCreate', async interaction => {
   if (interaction.customId === 'activate_modal_1') {
     if (isSystemPaused()) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('⏸️ System Paused').setColor(0xED4245).setDescription('Slot purchases are unavailable while the system is paused.').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('⏸️ System Paused').setColor(0xED4245).setDescription('Slot purchases are unavailable while the system is paused.').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1439,7 +1439,7 @@ client.on('interactionCreate', async interaction => {
 
     if (isNaN(rawInput) || rawInput < 1) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('❌ Invalid Input').setColor(0xED4245).setDescription('Please enter a whole number of hours (minimum **1 hour**).').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('❌ Invalid Input').setColor(0xED4245).setDescription('Please enter a whole number of hours (minimum **1 hour**).').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1456,7 +1456,7 @@ client.on('interactionCreate', async interaction => {
             .setDescription(
               `**${hoursEntered}h** costs **${creditsToSpend} credits** but you only have **${userCredits} credits**.\n\nUse **💳 Buy Credits** to top up.`
             )
-            .setFooter({ text: 'Lion Notifier' })
+            .setFooter({ text: 'LIL AJ' })
         ],
         ephemeral: true
       });
@@ -1464,7 +1464,7 @@ client.on('interactionCreate', async interaction => {
 
     if (getActiveSlots(1) >= project.maxSlots) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('❌ No Slots Available').setColor(0xED4245).setDescription('All **Pro** slots are currently full.').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('❌ No Slots Available').setColor(0xED4245).setDescription('All **Pro** slots are currently full.').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1494,13 +1494,13 @@ client.on('interactionCreate', async interaction => {
               { name: '💳 Credits Spent',     value: `**${creditsToSpend}**`,              inline: true  },
               { name: '💳 Credits Remaining', value: `**${users[userId].credits}**`,       inline: true  }
             )
-            .setFooter({ text: 'Keep your key private  •  Lion Notifier' })
+            .setFooter({ text: 'Keep your key private  •  LIL AJ' })
         ],
         ephemeral: true
       });
     } catch (err) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('❌ Luarmor Error').setColor(0xED4245).setDescription(`\`\`\`${err.message.slice(0, 1800)}\`\`\``).setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('❌ Luarmor Error').setColor(0xED4245).setDescription(`\`\`\`${err.message.slice(0, 1800)}\`\`\``).setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1510,7 +1510,7 @@ client.on('interactionCreate', async interaction => {
   if (interaction.customId.startsWith('bid_modal_')) {
     if (isSystemPaused()) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('⏸️ System Paused').setColor(0xED4245).setDescription('Auction bidding is unavailable while the system is paused.').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('⏸️ System Paused').setColor(0xED4245).setDescription('Auction bidding is unavailable while the system is paused.').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1521,14 +1521,14 @@ client.on('interactionCreate', async interaction => {
 
     if (isAuctionSlotOnCooldown()) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('🔒 Slot Occupied').setColor(0xED4245).setDescription('This slot is currently occupied. Bidding reopens when the key expires.').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('🔒 Slot Occupied').setColor(0xED4245).setDescription('This slot is currently occupied. Bidding reopens when the key expires.').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
 
     if (auction.status === 'ended') {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('⏳ Auction Finalizing').setColor(0xFEE75C).setDescription('This auction just ended. Wait for the next round.').setFooter({ text: 'Lion Notifier' })],
+        embeds: [new EmbedBuilder().setTitle('⏳ Auction Finalizing').setColor(0xD7BDE2).setDescription('This auction just ended. Wait for the next round.').setFooter({ text: 'LIL AJ' })],
         ephemeral: true
       });
     }
@@ -1551,7 +1551,7 @@ client.on('interactionCreate', async interaction => {
             .setTitle('❌ Bid Too Low')
             .setColor(0xED4245)
             .setDescription(`Minimum bid is **${calcMin} credits** (floor: ${AUCTION_MIN_BID}${topBid ? `, current top: ${topBid.amount}` : ''}).`)
-            .setFooter({ text: 'Lion Notifier' })
+            .setFooter({ text: 'LIL AJ' })
         ],
         ephemeral: true
       });
@@ -1572,7 +1572,7 @@ client.on('interactionCreate', async interaction => {
               `You need **${additionalCost} more credits** for this bid.\n` +
               `Current balance: **${users[userId].credits}**${existingBid ? ` | Upgrading: ${existingAmount} → ${bidAmount}` : ''}`
             )
-            .setFooter({ text: 'Lion Notifier' })
+            .setFooter({ text: 'LIL AJ' })
         ],
         ephemeral: true
       });
@@ -1618,7 +1618,7 @@ client.on('interactionCreate', async interaction => {
             { name: '💳 Balance',   value: `**${users[userId].credits}**`,     inline: true },
             { name: '🏆 Prize',     value: `**${AUCTION_FIXED_HOURS}h flat**`, inline: true },
           )
-          .setFooter({ text: 'If outbid, your credits are refunded instantly  •  Lion Notifier' })
+          .setFooter({ text: 'If outbid, your credits are refunded instantly  •  LIL AJ' })
       ],
       ephemeral: true
     });
