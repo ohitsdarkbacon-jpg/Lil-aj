@@ -1653,9 +1653,15 @@ setInterval(() => {
 }, 2 * 60 * 1000);
 
 // ===== READY =====
-client.once('ready', async () => {
+client.once('clientReady', async () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
-  await registerCommands();
+  try {
+    await registerCommands();
+  } catch (err) {
+    console.error('❌ Failed to register commands:', err.message);
+    console.error('   → Make sure the bot has the "applications.commands" OAuth2 scope in your server.');
+    console.error('   → Re-invite the bot using a URL that includes that scope, then restart.');
+  }
 
   ensureAuction();
 
