@@ -44,8 +44,8 @@ const PROJECTS = {
   1: {
     id:            process.env.LUARMOR_PROJECT_ID_1,
     name:          'Pro',
-    creditsPerHour: 10,
-    minCredits:    10,
+    creditsPerHour: 5,
+    minCredits:    5,
     maxSlots:      6,
     apiKey:        process.env.LUARMOR_API_KEY
   },
@@ -57,7 +57,7 @@ const BID_SLOTS             = 1;
 const AUCTION_DURATION_MINS = 5;
 const AUCTION_FIXED_HOURS   = 2;
 const AUCTION_COOLDOWN_MS   = AUCTION_FIXED_HOURS * 60 * 60 * 1000;
-const AUCTION_MIN_BID       = 25;
+const AUCTION_MIN_BID       = 1;
 
 const WEBHOOK_PORT     = parseInt(process.env.WEBHOOK_PORT || '3000');
 const WEBHOOK_BASE_URL = process.env.WEBHOOK_BASE_URL || `http://localhost:${WEBHOOK_PORT}`;
@@ -508,8 +508,8 @@ function generatePanelEmbed() {
     .addFields({
       name: '🟣 Pro Plan',
       value: [
-        `> 💰 **10 credits = 1 hour** ($10/hr)`,
-        `> ⏱️  Minimum purchase: **10 credits (1h)**`,
+        `> 💰 **5 credits = 1 hour** ($0.50/hr)`,
+        `> ⏱️  Minimum purchase: **5 credits (1h)**`,
         `> 🎰 Slots: **${proActive}/${project.maxSlots}** ${slotStatusBadge(proActive, project.maxSlots)}`,
         `> ${proActive >= project.maxSlots ? '🔴 **Full** — check back soon' : '🟢 **Available**'}`,
       ].join('\n'),
@@ -562,7 +562,7 @@ function generateAuctionSectionEmbed() {
     .setDescription(
       `Auction starts when the **first bid** is placed and runs for **${AUCTION_DURATION_MINS} minutes**.\n` +
       `The winner receives **${AUCTION_FIXED_HOURS} hours** flat — highest bid takes the slot.\n\n` +
-      `> 🟣 **Pro** minimum bid: **${AUCTION_MIN_BID} credits**\n\u200b`
+      `> 🟣 **Pro** minimum bid: **${AUCTION_MIN_BID} credit**\n\u200b`
     )
     .setTimestamp();
 
@@ -1287,9 +1287,9 @@ client.on('interactionCreate', async interaction => {
       new ActionRowBuilder().addComponents(
         new TextInputBuilder()
           .setCustomId('hours_amount')
-          .setLabel(`Hours (10 credits/hr — you have ${userCredits} credits)`)
+          .setLabel(`Hours (5 credits/hr — you have ${userCredits} credits)`)
           .setStyle(TextInputStyle.Short)
-          .setPlaceholder('e.g. 1 = 10cr, 2 = 20cr, 5 = 50cr')
+          .setPlaceholder('e.g. 1 = 5cr, 2 = 10cr, 5 = 25cr')
           .setRequired(true)
       )
     );
